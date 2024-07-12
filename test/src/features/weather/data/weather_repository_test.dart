@@ -2,7 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:open_weather_example_flutter/src/api/api.dart';
+import 'package:open_weather_example_flutter/src/features/weather/data/api_exception.dart';
 import 'package:open_weather_example_flutter/src/features/weather/data/weather_repository.dart';
+import 'package:open_weather_example_flutter/src/model/weather.dart';
+import 'package:open_weather_example_flutter/src/model/weather_data.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -53,31 +56,37 @@ const encodedWeatherJsonResponse = """
   }  
 """;
 
-final expectedWeatherFromJson = Weather(
-  weatherParams: WeatherParams(temp: 282.55, tempMin: 280.37, tempMax: 284.26),
-  weatherInfo: [
-    WeatherInfo(
-      description: 'clear sky',
-      icon: '01d',
-      main: 'Clear',
-    )
-  ],
-  dt: 1560350645,
-);
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(Uri.parse('https://api.openweathermap.org/data/2.5/weather?q=london&appid=df26312b7a815952a449f5cc6d62b3c9&units=metric'));
+  });
+
   test('repository with mocked http client, success', () async {
     final mockHttpClient = MockHttpClient();
     final api = OpenWeatherMapAPI('apiKey');
     final weatherRepository = HttpWeatherRepository(api: api, client: mockHttpClient);
-    //TODO Mock http and ensure weather is correct
+
+    when(() => mockHttpClient.get(any()))
+        .thenAnswer((_) async => http.Response(encodedWeatherJsonResponse, 200));
+
+    final weather = await weatherRepository.getWeather('London');
+
+    expect(weather, isA<WeatherData>());
   });
 
   test('repository with mocked http client, failure', () async {
     final mockHttpClient = MockHttpClient();
     final api = OpenWeatherMapAPI('apiKey');
     final weatherRepository = HttpWeatherRepository(api: api, client: mockHttpClient);
-    //TODO Mock http 404 and ensure api returns CityNotFoundException
+
+    when(() => mockHttpClient.get(any()))
+        .thenAnswer((_) async => http.Response('Not Found', 404));
+
+    expect(
+          () async => await weatherRepository.getWeather('UnknownCity'),
+      throwsA(isA<CityNotFoundException>()),
+    );
   });
 
   //TODO test providers data as well

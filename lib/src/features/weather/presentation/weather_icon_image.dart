@@ -10,9 +10,17 @@ class WeatherIconImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      imageUrl: iconUrl,
+      imageUrl: getWeatherIcon(iconUrl),
       width: size,
       height: size,
     );
   }
+
+
+
+   getWeatherIcon(String url) {
+    return 'http://openweathermap.org/img/w/$url.png';
+  }
+
+
 }

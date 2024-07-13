@@ -9,43 +9,47 @@ import '../../../model/forecast_data.dart';
 import '../../../model/weather_data.dart';
 
 class WeatherProvider extends ChangeNotifier {
-  HttpWeatherRepository repository = HttpWeatherRepository(
-    api: OpenWeatherMapAPI(sl<String>(instanceName: 'api_key')),
-    client: http.Client(),
-  );
+
+  HttpWeatherRepository repository = sl.get<HttpWeatherRepository>();
 
   String city = 'London';
-  WeatherData? currentWeatherProvider;
-  ForecastData? hourlyWeatherProvider;
-  late LoadingState networkState ;
+
+  WeatherData? _currentWeatherProvider;
+  ForecastData? _hourlyWeatherProvider;
+  LoadingState _networkState = LoadingState.loading;
+
+
+  WeatherData? get currentWeatherProvider => _currentWeatherProvider;
+  ForecastData? get hourlyWeatherProvider => _hourlyWeatherProvider;
+  LoadingState get networkState => _networkState;
 
   Future<void> getWeatherData() async {
-    networkState = LoadingState.loading;
+    _networkState = LoadingState.loading;
     try{
       final weather = await repository.getWeather(city);
       //TODO set the weather and fetch forecast after
-      currentWeatherProvider = weather;
-      networkState = LoadingState.success;
+      _currentWeatherProvider = weather;
+      _networkState = LoadingState.success;
       notifyListeners();
     }
     catch(e){
-      networkState = LoadingState.error;
+      _networkState = LoadingState.error;
       notifyListeners();
     }
   }
 
   Future<void> getForecastData () async {
-    networkState = LoadingState.loading;
+    _networkState = LoadingState.loading;
     try{
       //TODO set the forecast
       final forecast = await repository.forecastData(city);
-      hourlyWeatherProvider = forecast;
+      _hourlyWeatherProvider = forecast;
 
       notifyListeners();
-      networkState = LoadingState.success;
+      _networkState = LoadingState.success;
     }
     catch(e){
-      networkState = LoadingState.error;
+      _networkState = LoadingState.error;
       notifyListeners();
     }
   }

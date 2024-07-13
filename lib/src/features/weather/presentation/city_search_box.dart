@@ -42,6 +42,12 @@ class _CitySearchRowState extends State<CitySearchBox> {
           children: [
              Expanded(
               child: TextField(
+                textInputAction: TextInputAction.done,
+                onSubmitted: (value) {
+                  context.read<WeatherProvider>().city = _searchController.text;
+                  context.read<WeatherProvider>().getWeatherData();
+                  context.read<WeatherProvider>().getForecastData();
+                },
                 controller: _searchController,
                 decoration:const InputDecoration(
                   filled: true,

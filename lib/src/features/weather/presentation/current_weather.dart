@@ -14,14 +14,17 @@ class CurrentWeather extends StatelessWidget {
     return Selector<WeatherProvider, (String city, WeatherData? weatherData ,LoadingState networkState)>(
         selector: (context, provider ) => (provider.city, provider.currentWeatherProvider , provider.networkState),
         builder: (context, data, _) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(data.$1, style: Theme.of(context).textTheme.headlineMedium),
-              //TODO account for null, errors and loading states
-              data.$3 == LoadingState.loading || data.$2 == null?  CircularProgressIndicator()
-              : CurrentWeatherContents(data: data.$2!!),
-            ],
+          return Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(data.$1, style: Theme.of(context).textTheme.headlineMedium),
+                //TODO account for null, errors and loading states
+                data.$3 == LoadingState.loading || data.$2 == null?  CircularProgressIndicator()
+                : CurrentWeatherContents(data: data.$2!!),
+              ],
+            ),
           );
         });
   }
@@ -44,7 +47,7 @@ class CurrentWeatherContents extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-       WeatherIconImage(iconUrl: "${"http://openweathermap.org/img/w/${data?.weather![0].icon.toString()}.png"}" , size: 120),
+       WeatherIconImage(iconUrl: "${"${data?.weather![0].icon.toString()}"}" , size: 120),
         Text(temp!, style: textTheme.displayMedium),
         Text(highAndLow, style: textTheme.bodyMedium),
       ],

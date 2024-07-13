@@ -22,16 +22,16 @@ class WeatherPage extends StatelessWidget {
           ),
         ),
         child: const SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Spacer(),
-                CitySearchBox(),
-                Spacer(),
-                CurrentWeather(),
-                ForecastListScreen()
-              ],
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CitySearchBox(),
+                  CurrentWeather(),
+                  ForecastListScreen()
+                ],
+              ),
             ),
           ),
         ),

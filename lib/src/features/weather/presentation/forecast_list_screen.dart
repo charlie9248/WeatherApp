@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_weather_example_flutter/src/features/weather/presentation/weather_icon_image.dart';
 import 'package:open_weather_example_flutter/src/model/weather_data.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +30,7 @@ class ForecastListScreen extends StatelessWidget {
                 ),
             builder: (context, data, _) {
               return data.$3 == LoadingState.loading || data.$2 == null
-                  ?  CircularProgressIndicator()
+                  ?  Container()
                   : forecastList(data.$2!!);
 
             }));
@@ -84,15 +86,14 @@ class ForecastListScreen extends StatelessWidget {
                       const SizedBox(
                         height: 25,
                       ),
-                      Image.network(
-                          "${"http://openweathermap.org/img/w/${data.list![0].weather![0].icon}.png"}"),
+                      WeatherIconImage(
+                        size: 30,
+                          iconUrl : "${data.list![0].weather![0].icon}"),
                       const SizedBox(
                         height: 25,
                       ),
                       Text(
-
-                          "",
-
+                        data.list![index].main!.temp.toString(),
                       ),
                       const SizedBox(
                         height: 25,
